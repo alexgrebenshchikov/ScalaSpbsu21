@@ -93,7 +93,7 @@ object TheGame {
     println("Enter the length of secret.")
     val len = askLength()
     val secret = generateNumberString(len)
-    println("I thought of a number! Try to guess it!")
+    println("I thought of a number! Try to guess it! ")
     askGuess(secret, name)
   }
 }
