@@ -17,16 +17,15 @@ object TheGame {
 
   class WrongNumberLengthException(expected: Int, got: Int) extends RuntimeException
 
-  def generateNumberString(length: Int): String = {
-    val random = new Random()
-    var possibleSymbols = ('0' to '9') ++ ('A' to 'Z')
-    var res = ""
-    for (_ <- 0 until length) {
-      val reply = possibleSymbols(random.nextInt(possibleSymbols.length))
-      res += reply
-      possibleSymbols = possibleSymbols.filter(_ != reply)
+
+  def generateNumberString(length: Int, possibleSymbols: IndexedSeq[Char] = ('0' to '9') ++ ('A' to 'Z'),
+                           random: Random = new Random()): String = {
+    length match {
+      case 0 => ""
+      case n =>
+        val reply = possibleSymbols(random.nextInt(possibleSymbols.length))
+        reply + generateNumberString(n - 1, possibleSymbols.filter(_ != reply), random)
     }
-    res
   }
 
   def checkRepeatedDigits(input: String): Boolean = input.toSet.size == input.length
@@ -76,7 +75,7 @@ object TheGame {
   }
 
   @tailrec
-  def askLength() : Int = {
+  def askLength(): Int = {
     try {
       val len = readLine().toInt
       return len
@@ -85,6 +84,7 @@ object TheGame {
     }
     askLength()
   }
+
   def main(args: Array[String]): Unit = {
     print("Enter your name: ")
     val name = readLine()
@@ -92,7 +92,7 @@ object TheGame {
     println("Enter the length of secret.")
     val len = askLength()
     val secret = generateNumberString(len)
-    println("I thought of a number! Try to guess it!")
+    println("I thought of a secret! Try to guess it!")
     askGuess(secret, name)
   }
 }
