@@ -77,12 +77,11 @@ object TheGame {
   @tailrec
   def askLength(): Int = {
     try {
-      val len = readLine().toInt
-      return len
+      readLine().toInt
     } catch {
       case _: Throwable => println("Incorrect input!")
+        askLength()
     }
-    askLength()
   }
 
   def main(args: Array[String]): Unit = {
