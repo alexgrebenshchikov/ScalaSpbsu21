@@ -5,74 +5,77 @@ import org.spbsu.mkn.scala.IntList._
 import scala.annotation.tailrec
 
 sealed trait IntList {
-  def head: Int = {
-    this match {
-      case IntNil => undef
-      case Cons(x, _) => x
-    }
-  }
-  def tail: IntList = {
-    this match {
-      case IntNil => undef
-      case Cons(_, xs) => xs
-    }
-  }
+  def head: Int
 
-  def drop(n: Int): IntList = if (n <= 0) this else tail.drop(n - 1)
+  def tail: IntList
 
-  def take(n: Int): IntList = if (n <= 0) IntNil else Cons(head, tail.take(n - 1))
+  def drop(n: Int): IntList
 
-  def map(f: Int => Int): IntList = {
-    this match {
-      case IntNil => IntNil
-      case Cons(x, xs) => Cons(f(x), xs.map(f))
-    }
-  }
+  def take(n: Int): IntList
+
+  def map(f: Int => Int): IntList
+
   def ::(elem: Int): IntList
 }
 
 case object IntNil extends IntList {
   override def ::(elem: Int): IntList = Cons(elem, IntNil)
+
+  override def head: Int = undef
+
+  override def tail: IntList = undef
+
+  override def drop(n: Int): IntList = if (n <= 0) this else undef
+
+  override def take(n: Int): IntList = if (n <= 0) IntNil else undef
+
+  override def map(f: Int => Int): IntList = IntNil
 }
 
-case class Cons(hd: Int, tl: IntList) extends IntList {
-  override def ::(elem: Int): IntList = Cons(elem, hd :: tl)
+case class Cons(x: Int, xs: IntList) extends IntList {
+  override def ::(elem: Int): IntList = Cons(elem, this)
+
+  override def head: Int = x
+
+  override def tail: IntList = xs
+
+  override def drop(n: Int): IntList = if (n <= 0) this else xs.drop(n - 1)
+
+  override def take(n: Int): IntList = if (n <= 0) IntNil else Cons(x, xs.take(n - 1))
+
+  override def map(f: Int => Int): IntList = Cons(f(x), xs.map(f))
 }
 
 object IntList {
-  def apply(elem: Int*): IntList = if(elem.isEmpty) IntNil else Cons(elem.head, apply(elem.tail: _*))
+  def apply(elem: Int*): IntList = if (elem.isEmpty) IntNil else Cons(elem.head, apply(elem.tail: _*))
+
   def undef: Nothing = throw new UnsupportedOperationException("operation is undefined")
+
   def fromSeq(seq: Seq[Int]): IntList = {
     seq match {
       case x +: xs => Cons(x, fromSeq(xs))
       case _ => IntNil
     }
   }
+
   def sum(intList: IntList): Int = {
     intList match {
       case IntNil => undef
-      case Cons(x, IntNil) => x
-      case Cons(x, xs) => x + sum(xs)
+      case _ => foldLeft(intList, 0)((a, b) => a + b)
     }
   }
+
   def size(intList: IntList): Int = {
-    intList match {
-      case IntNil => 0
-      case Cons(_, xs) => 1 + size(xs)
-    }
+    foldLeft(intList, 0)((s, _) => s + 1)
   }
+
   // extra task: implement sum using foldLeft
   @tailrec
-  def foldLeft[B](list : IntList, ini : B)(f : (B, Int) => B): B = {
+  def foldLeft[B](list: IntList, ini: B)(f: (B, Int) => B): B = {
     list match {
       case IntNil => ini
       case Cons(x, xs) => foldLeft(xs, f(ini, x))(f)
     }
   }
-
-  def sum2(list : IntList) : Int = {
-    foldLeft(list, 0)((a, b) => a + b)
-  }
 }
-
 
