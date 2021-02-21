@@ -32,18 +32,14 @@ case object IntNil extends IntList {
   override def map(f: Int => Int): IntList = IntNil
 }
 
-case class Cons(x: Int, xs: IntList) extends IntList {
+case class Cons(head: Int, tail: IntList) extends IntList {
   override def ::(elem: Int): IntList = Cons(elem, this)
 
-  override def head: Int = x
+  override def drop(n: Int): IntList = if (n <= 0) this else tail.drop(n - 1)
 
-  override def tail: IntList = xs
+  override def take(n: Int): IntList = if (n <= 0) IntNil else Cons(head, tail.take(n - 1))
 
-  override def drop(n: Int): IntList = if (n <= 0) this else xs.drop(n - 1)
-
-  override def take(n: Int): IntList = if (n <= 0) IntNil else Cons(x, xs.take(n - 1))
-
-  override def map(f: Int => Int): IntList = Cons(f(x), xs.map(f))
+  override def map(f: Int => Int): IntList = Cons(f(head), tail.map(f))
 }
 
 object IntList {
@@ -78,4 +74,3 @@ object IntList {
     }
   }
 }
-
