@@ -15,12 +15,10 @@ sealed trait IntList {
 
   def map(f: Int => Int): IntList
 
-  def ::(elem: Int): IntList
+  def ::(elem: Int): IntList = Cons(elem, this)
 }
 
 case object IntNil extends IntList {
-  override def ::(elem: Int): IntList = Cons(elem, IntNil)
-
   override def head: Int = undef
 
   override def tail: IntList = undef
@@ -33,8 +31,6 @@ case object IntNil extends IntList {
 }
 
 case class Cons(head: Int, tail: IntList) extends IntList {
-  override def ::(elem: Int): IntList = Cons(elem, this)
-
   override def drop(n: Int): IntList = if (n <= 0) this else tail.drop(n - 1)
 
   override def take(n: Int): IntList = if (n <= 0) IntNil else Cons(head, tail.take(n - 1))
@@ -74,3 +70,4 @@ object IntList {
     }
   }
 }
+
