@@ -1,6 +1,7 @@
 package org.spbsu.mkn.scala
 
 import org.scalatest.funsuite.AnyFunSuite
+import org.spbsu.mkn.scala.Comparators.{IntComparator, MyGenericListComparator, StringComparator}
 import org.spbsu.mkn.scala.MyGenericList._
 
 class MyGenericListTest extends AnyFunSuite {
@@ -8,7 +9,6 @@ class MyGenericListTest extends AnyFunSuite {
   //remove after implementing actual MyNil
 
   test("head") {
-
     assert(fromSeq(Seq(1, 2, 3)).head == 1)
     assert(fromSeq(Seq(1)).head == 1)
     assertThrows[UnsupportedOperationException](fromSeq(Seq()).head)
@@ -50,4 +50,14 @@ class MyGenericListTest extends AnyFunSuite {
     assert(sum(fromSeq(Seq(1))) == 1)
   }
 
+  test("sort") {
+    assert(sort(MyNil : MyGenericList[Int]) == MyNil)
+    assert(sort(fromSeq(Seq(42, 1, 87, -31, 1203, 11))) == fromSeq(Seq(-31, 1, 11, 42, 87, 1203)))
+    assert(sort(fromSeq(Seq("bazooka","foo", "bar", "baz", "azimut"))) ==
+      fromSeq(Seq("azimut","bar", "baz", "bazooka", "foo")))
+    val a = 6 :: 1 :: 89 :: 2 :: 5 :: 6 :: -100 :: MyNil
+    val b = 6 :: 1 :: 89 :: 2 :: MyNil
+    val c = 6 :: -34 :: 123 :: MyNil
+    assert(sort(a :: b :: c :: MyNil) == c :: b :: a :: MyNil)
+  }
 }
